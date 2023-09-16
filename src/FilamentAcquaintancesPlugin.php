@@ -4,7 +4,6 @@ namespace Thiktak\FilamentAcquaintances;
 
 use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Thiktak\FilamentAcquaintances\Filament\Pages\UserAcquaintances;
 
@@ -30,7 +29,7 @@ class FilamentAcquaintancesPlugin implements Plugin
                 MenuItem::make('acquaintances')
                     ->label('User profile')
                     ->url(UserAcquaintances::getUrl())
-                    ->icon('heroicon-o-user')
+                    ->icon('heroicon-o-user'),
             ]);
     }
 
@@ -49,7 +48,6 @@ class FilamentAcquaintancesPlugin implements Plugin
 
     //public function activate
 }
-
 
 /*
         ->activateFriendship(userPage: true, blocable: true, requestable: true)
