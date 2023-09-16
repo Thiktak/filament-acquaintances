@@ -21,6 +21,7 @@
     ],
     "require": {
         "php": "^8.1",
+        "aymanalhattami/filament-page-with-sidebar": "^2.0",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^10.0",
         "multicaret/laravel-acquaintances": "^3.5",

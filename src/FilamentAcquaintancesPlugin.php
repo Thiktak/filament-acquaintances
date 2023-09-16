@@ -3,8 +3,10 @@
 namespace Thiktak\FilamentAcquaintances;
 
 use Filament\Contracts\Plugin;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Thiktak\FilamentAcquaintances\Filament\Pages\UserAcquaintances;
 
 class FilamentAcquaintancesPlugin implements Plugin
 {
@@ -15,14 +17,20 @@ class FilamentAcquaintancesPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel
+            ->pages([
+                UserAcquaintances::class,
+            ]);
     }
 
     public function boot(Panel $panel): void
     {
         $panel
             ->userMenuItems([
-                NavigationItem::make('acquaintances')
+                MenuItem::make('acquaintances')
+                    ->label('User profile')
+                    ->url(UserAcquaintances::getUrl())
+                    ->icon('heroicon-o-user')
             ]);
     }
 

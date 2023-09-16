@@ -18,9 +18,9 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentAcquaintancesServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-acquaintances';
+    public static string $name = 'thiktak-filament-acquaintances';
 
-    public static string $viewNamespace = 'filament-acquaintances';
+    public static string $viewNamespace = 'thiktak-filament-acquaintances';
 
     public function configurePackage(Package $package): void
     {
