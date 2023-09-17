@@ -6,9 +6,35 @@ use Filament\Contracts\Plugin;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Thiktak\FilamentAcquaintances\Filament\Pages\UserAcquaintances;
+use Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource;
 
 class FilamentAcquaintancesPlugin implements Plugin
 {
+    public array $configureUserProfileTrends = [
+        'userPage' => true,
+        'showActivitiesGraph' => true,
+        'showTimeline' => true,
+        'showPopular' => true,
+        'popularAllowAllModels' => true,
+        'popularAllowModels' => []
+    ];
+
+    public array $configureUserProfileFavorites = [
+        'userPage' => true,
+    ];
+
+    public array $configureUserProfileFollowings = [
+        'userPage' => true,
+    ];
+
+    public array $configureUserProfileSubscriptions = [
+        'userPage' => true,
+    ];
+
+    public array $configureUserProfileFriends = [
+        'userPage' => true,
+    ];
+
     public function getId(): string
     {
         return 'filament-acquaintances';
@@ -18,8 +44,17 @@ class FilamentAcquaintancesPlugin implements Plugin
     {
         $panel
             ->pages([
-                UserAcquaintances::class,
-            ]);
+                //UserAcquaintances::class, // This one works fine with UserAcquaintances::getUrl()
+            ])
+            ->resources([
+                UserAcquaintanceResource::class,
+            ])
+            /*->discoverResources(
+                in: app_path('../vendor/thiktak/filament-acquaintances/src/Filament/Resources/'),
+                for: 'Thiktak\\FilamentAcquaintances\\Resources'
+            )
+            //*/;
+        //dd(glob(app_path('../vendor/thiktak/filament-acquaintances/src/Filament/Resources/*')));
     }
 
     public function boot(Panel $panel): void
@@ -28,9 +63,18 @@ class FilamentAcquaintancesPlugin implements Plugin
             ->userMenuItems([
                 MenuItem::make('acquaintances')
                     ->label('User profile')
-                    ->url(UserAcquaintances::getUrl())
+                    ->url(fn () => UserAcquaintanceResource::getUrl('view', ['record' => auth()->id()])) //UserAcquaintanceResource\Pages\ViewUser::getRouteName())
                     ->icon('heroicon-o-user'),
             ]);
+
+        //->url(UserAcquaintances::getUrl())
+
+        //dd(UserAcquaintanceResource::getRouteBaseName(), UserAcquaintanceResource::getUrl());
+        /*dd(
+            UserAcquaintanceResource::getRouteBaseName(),
+            UserAcquaintances::getRouteName()
+        ); //*/
+        //dd(UserAcquaintanceResource::getUrl());
     }
 
     public static function make(): static
@@ -46,7 +90,24 @@ class FilamentAcquaintancesPlugin implements Plugin
         return $plugin;
     }
 
-    //public function activate
+    public function config(string $dot = null): mixed
+    {
+        return $dot ? data_get($this, $dot) : $this;
+    }
+
+    public function configureUserProfileTrends(bool $userPage = true, $popularAllowAllModels = true, array $popularAllowModels = []): static
+    {
+        $this->configureUserProfileTrends['userPage'] = $userPage;
+        $this->configureUserProfileTrends['popularAllowAllModels'] = (bool) $popularAllowAllModels;
+
+        $this->configureUserProfileTrends['popularAllowModels'] = (array) $popularAllowModels;
+
+        if (count($this->configureUserProfileTrends['popularAllowModels'])) {
+            $this->configureUserProfileTrends['popularAllowAllModels'] = false;
+        }
+
+        return $this;
+    }
 }
 
 /*
