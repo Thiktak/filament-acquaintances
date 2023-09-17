@@ -2,17 +2,14 @@
 
 namespace Thiktak\FilamentAcquaintances;
 
-use Closure;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Collection;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -157,8 +154,6 @@ class FilamentAcquaintancesServiceProvider extends PackageServiceProvider
         ];
     }
 
-
-
     public function boot()
     {
 
@@ -218,15 +213,16 @@ class FilamentAcquaintancesServiceProvider extends PackageServiceProvider
                             //dd($this, $state, $this->getState());
                             if ($state instanceof \Illuminate\Database\Eloquent\Collection) {
                                 if ($methodKey == 'label') {
-                                    return ($state
+                                    return $state
                                         ->map(function ($state) {
                                             if ($state instanceof Model) {
                                                 if (method_exists($state, 'getFilamentLabel')) {
                                                     return call_user_func([$state, 'getFilamentLabel']);
                                                 }
                                             }
+
                                             return $state;
-                                        }));
+                                        });
                                 }
                             } elseif ($state instanceof Model) {
                                 if (method_exists($state, $method['methodModel'])) {

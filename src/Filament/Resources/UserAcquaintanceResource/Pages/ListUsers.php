@@ -2,14 +2,9 @@
 
 namespace Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource\Pages;
 
-use App\Filament\Matrix\Resources\Matrix\PersonResource;
-use App\Jobs\Matrix\ProcessUpdateScores;
 use AymanAlhattami\FilamentPageWithSidebar\Traits\HasPageSidebar;
 use Filament\Actions;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
 use Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource;
 

@@ -2,24 +2,15 @@
 
 namespace Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource\Pages;
 
-use App\Filament\Matrix\Resources\Matrix\PersonResource;
-use App\Jobs\Matrix\ProcessUpdateScores;
 use App\Models\User;
 use AymanAlhattami\FilamentPageWithSidebar\Traits\HasPageSidebar;
 use Filament\Actions;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationItem;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Resources\Pages\ListRecords\Tab;
 use Filament\Resources\Pages\Page;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
@@ -34,8 +25,9 @@ use Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource;
 
 class FriendsUser extends Page implements HasTable
 {
-    use InteractsWithTable, InteractsWithFormActions;
     use HasPageSidebar;
+    use InteractsWithFormActions;
+    use InteractsWithTable;
 
     protected static string $view = 'thiktak-filament-acquaintances::filament.resources.user-acquaintances.index';
 
@@ -46,26 +38,24 @@ class FriendsUser extends Page implements HasTable
     public array $requestStatus = [
         'pending' => 'info',
         'accepted' => 'success',
-        'denied'  => 'warning',
-        'blocked' => 'danger'
+        'denied' => 'warning',
+        'blocked' => 'danger',
     ];
 
-
-
-    static public function getSidebarNavigationItem(Model $record): array
+    public static function getSidebarNavigationItem(Model $record): array
     {
         $groups = collect(config('acquaintances.friendships_groups'))
             ->map(function ($order, $group) {
                 return collect([
                     'key' => $group,
                     'label' => $group,
-                    'order' => $order
+                    'order' => $order,
                 ]);
             })
             ->add(collect([
                 'key' => '',
                 'label' => 'All',
-                'order' => -1
+                'order' => -1,
             ]))
             ->sortBy('order');
 
@@ -90,7 +80,6 @@ class FriendsUser extends Page implements HasTable
         return $items;
     }
 
-
     protected function getHeaderActions(): array
     {
         return [
@@ -106,10 +95,10 @@ class FriendsUser extends Page implements HasTable
                     // ...
                 ])
                 ->using(function (array $data, string $model) {
-                    foreach ((array)($data['user_id'] ?? []) as $userId) {
+                    foreach ((array) ($data['user_id'] ?? []) as $userId) {
                         $user = User::find($userId);
                         if ($user) {
-                            if (!$user->hasFriendRequestFrom($this->record)) {
+                            if (! $user->hasFriendRequestFrom($this->record)) {
                                 $this->record->befriend($user);
 
                                 Notification::make()
@@ -127,7 +116,7 @@ class FriendsUser extends Page implements HasTable
                         }
                     }
                 })
-                ->successNotification(null)
+                ->successNotification(null),
         ];
     }
 
@@ -167,10 +156,10 @@ class FriendsUser extends Page implements HasTable
                     };
                 }),
 
-
             TextColumn::make('groups')
                 ->getStateUsing(function (Model $record) {
                     $groups = array_flip(config('acquaintances.friendships_groups'));
+
                     return $record->groups
                         ->pluck('group_id')
                         ->map(fn ($id) => $groups[$id] ?? $id);
@@ -181,9 +170,9 @@ class FriendsUser extends Page implements HasTable
                 ->color(fn (string $state): string => match ($state) {
                     'pending' => 'info',
                     'accepted' => 'success',
-                    'denied'  => 'warning',
+                    'denied' => 'warning',
                     'blocked' => 'danger',
-                })
+                }),
         ];
     }
 
@@ -225,7 +214,6 @@ class FriendsUser extends Page implements HasTable
                     ->visible(fn (Model $record): bool => in_array($record->status, ['accepted']))
                     ->action(fn (Model $record) => $record->recipient->unfriend($record->sender)),
 
-
                 Action::make('unblock')
                     ->label('unblock')
                     ->requiresConfirmation()
@@ -253,10 +241,12 @@ class FriendsUser extends Page implements HasTable
         switch ($action) {
             case 'unblock':
                 auth()->user()->unblockFriend($other);
+
                 break;
 
             case 'block':
                 auth()->user()->blockFriend($other);
+
                 break;
         }
     }

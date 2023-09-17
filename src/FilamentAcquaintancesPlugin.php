@@ -16,7 +16,7 @@ class FilamentAcquaintancesPlugin implements Plugin
         'showTimeline' => true,
         'showPopular' => true,
         'popularAllowAllModels' => true,
-        'popularAllowModels' => []
+        'popularAllowModels' => [],
     ];
 
     public array $configureUserProfileFavorites = [

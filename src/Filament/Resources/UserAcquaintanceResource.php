@@ -4,8 +4,6 @@ namespace Thiktak\FilamentAcquaintances\Filament\Resources;
 
 use App\Models\User;
 use AymanAlhattami\FilamentPageWithSidebar\FilamentPageSidebar;
-use AymanAlhattami\FilamentPageWithSidebar\PageNavigationItem;
-use AymanAlhattami\FilamentPageWithSidebar\Traits\HasPageSidebar;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
@@ -37,16 +35,14 @@ class UserAcquaintanceResource extends Resource
             ...FavoritesUser::getSidebarNavigationItem($record),
             ...SubscriptionsUser::getSidebarNavigationItem($record),
             ...FollowingsUser::getSidebarNavigationItem($record),
-            ...FriendsUser::getSidebarNavigationItem($record)
+            ...FriendsUser::getSidebarNavigationItem($record),
         ];
-
 
         return FilamentPageSidebar::make()
             ->setTitle($record->name)
             ->setDescription($record->email)
             ->setNavigationItems($items);
     }
-
 
     public static function getPages(): array
     {
@@ -61,7 +57,7 @@ class UserAcquaintanceResource extends Resource
         ];
     }
 
-    static public function getHelperTitle(User $record, $page): string
+    public static function getHelperTitle(User $record, $page): string
     {
         return $record->name . ' (' . $page . ')';
     }

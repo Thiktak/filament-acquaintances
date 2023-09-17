@@ -2,16 +2,9 @@
 
 namespace Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource\Pages;
 
-use App\Filament\Matrix\Resources\Matrix\PersonResource;
-use App\Jobs\Matrix\ProcessUpdateScores;
 use App\Models\User;
 use AymanAlhattami\FilamentPageWithSidebar\Traits\HasPageSidebar;
-use Filament\Actions;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
-use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 use Multicaret\Acquaintances\Models\InteractionRelation;
 use Thiktak\FilamentAcquaintances\Filament\Resources\UserAcquaintanceResource;
@@ -42,11 +35,11 @@ class ViewUser extends \Filament\Resources\Pages\Page
     protected function getViewData(): array
     {
 
-        return ([
+        return [
             ...$this->getDataForAcitivitiesGraph(),
             ...$this->getDataForTimeline(),
             ...$this->getDataForPopular(),
-        ]);
+        ];
     }
 
     protected function getHeaderActions(): array
@@ -54,16 +47,14 @@ class ViewUser extends \Filament\Resources\Pages\Page
         return [];
     }
 
-
     /**************************************************************************
      * Support functions
      *************************************************************************/
 
-    static public function getConfig($dot = ''): mixed
+    public static function getConfig($dot = ''): mixed
     {
         return FilamentAcquaintancesPlugin::get()->config('configureUserProfileTrends.' . $dot);
     }
-
 
     /**************************************************************************
      * Logic functions
@@ -71,9 +62,9 @@ class ViewUser extends \Filament\Resources\Pages\Page
 
     public function getDataForAcitivitiesGraph(): array
     {
-        if (!static::getConfig('showActivitiesGraph')) {
+        if (! static::getConfig('showActivitiesGraph')) {
             return [
-                'showActivitiesGraph' => false
+                'showActivitiesGraph' => false,
             ];
         }
 
@@ -94,34 +85,31 @@ class ViewUser extends \Filament\Resources\Pages\Page
         $period = new \DatePeriod($begin, $interval, $end);
 
         foreach ($period as $date) {
-            if (!isset($interactionsDates[$date->format('Y-m-d')])) {
+            if (! isset($interactionsDates[$date->format('Y-m-d')])) {
                 $interactionsDates[$date->format('Y-m-d')] = 0;
             }
         }
-
 
         $interactionsDates = collect($interactionsDates)
             ->sortKeysDesc()
             ->map(fn ($nb) => collect([
                 'nb' => $nb,
-                'prc' => $nb / $max
+                'prc' => $nb / $max,
             ]));
 
         return [
             'showActivitiesGraph' => true,
             'datePeriod' => $period,
-            'interactionsDates' => $interactionsDates
+            'interactionsDates' => $interactionsDates,
         ];
     }
-
-
 
     public function getDataForTimeline(): array
     {
 
-        if (!static::getConfig('showTimeline')) {
+        if (! static::getConfig('showTimeline')) {
             return [
-                'showTimeline' => false
+                'showTimeline' => false,
             ];
         }
 
@@ -142,13 +130,13 @@ class ViewUser extends \Filament\Resources\Pages\Page
                     ->get()
                     ->mapWithKeys(function ($record) {
                         $key = implode(';', [
-                            '', $record->created_at, $record->getKey(), get_class($record)
+                            '', $record->created_at, $record->getKey(), get_class($record),
                         ]);
                         foreach (['created_at', 'updated_at', 'deleted_at'] as $what) {
                             if ($record->$what) {
                                 $return[$record->$what . $key] = [
-                                    'key'  => $record->getKeyName(),
-                                    'id'   => $record->getKey(),
+                                    'key' => $record->getKeyName(),
+                                    'id' => $record->getKey(),
                                     'object' => get_class($record),
                                     'title' => (string) $record,
                                     'date' => $record->$what,
@@ -157,27 +145,26 @@ class ViewUser extends \Filament\Resources\Pages\Page
                                 ];
                             }
                         }
+
                         return $return;
                     });
             })
-            ->collapse()
-            ->sortKeysDesc()
-            ->take(50)
-            ->groupBy('YMD');
-
+                ->collapse()
+                ->sortKeysDesc()
+                ->take(50)
+                ->groupBy('YMD');
 
         return [
             'showTimeline' => true,
-            'timeline' => $timeline
+            'timeline' => $timeline,
         ];
     }
 
-
     public function getDataForPopular(): array
     {
-        if (!static::getConfig('showPopular')) {
+        if (! static::getConfig('showPopular')) {
             return [
-                'showPopular' => false
+                'showPopular' => false,
             ];
         }
 
